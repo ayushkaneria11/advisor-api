@@ -1,6 +1,7 @@
 from django.contrib.auth import models
+from django.db.models import fields
 from django.http import request
-from .models import Advisor, User, auth
+from .models import Advisor, Booking, User, auth
 from django.contrib.auth.hashers import check_password
 from rest_framework import serializers
 from django.contrib.auth import authenticate, login
@@ -25,8 +26,6 @@ class AddAdvisorSerializer(serializers.ModelSerializer):
         return newadvisor
 
 class registerUserSerializer(serializers.ModelSerializer):
-
-    
 
     class Meta:
         model = User
@@ -68,7 +67,13 @@ class getAdvisorListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Advisor
         fields = ('__all__')
-        
 
+class bookAdvisorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Booking
+        fields = ('booking_time',)
+    # def bookAdvisor():
+    #     pass
 
 

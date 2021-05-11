@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework import response
 from .models import Advisor
 from rest_framework import serializers
 from .serializer import *
@@ -7,9 +8,10 @@ from rest_framework import status
 from rest_framework.decorators import api_view , permission_classes 
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.http import HttpResponse
+import json
 # Create your views here.
 
-@api_view(['POST',])
+@api_view(['POST'])
 @permission_classes([AllowAny])
 def addAdvisor(request):
     serializers = AddAdvisorSerializer(data=request.data,many=False)
@@ -20,7 +22,7 @@ def addAdvisor(request):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST',])
+@api_view(['POST'])
 @permission_classes([AllowAny])
 def registerUser(request):
     serializers = registerUserSerializer(data=request.data,many=False)
@@ -46,3 +48,14 @@ def getAdvisorList(request, **kwargs):
     get = Advisor.objects.all()
     serializers = getAdvisorListSerializer(get, many=True) 
     return Response(data=serializers.data,status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def bookAdvisor(request,user_id,advisor_id):
+    print(request.data.dict()['booking_time'])
+    serializers = bookAdvisorSerializer(data=request.data,many=False)
+    if serializers.is_valid():
+        book = Booking.objects.create(userid=User.objects.get(id=user_id),advisorid=Advisor.objects.get(id=advisor_id),booking_time=request.data.dict()['booking_time'])
+        return Response(status=status.HTTP_200_OK)
+    else:
+        return Response(data=serializers.errors)
