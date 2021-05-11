@@ -40,3 +40,9 @@ def loginUser(request):
     else:
         return Response(data=serializers.errors,status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def getAdvisorList(request, **kwargs):
+    get = Advisor.objects.all()
+    serializers = getAdvisorListSerializer(get, many=True) 
+    return Response(data=serializers.data,status=status.HTTP_200_OK)

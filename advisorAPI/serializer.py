@@ -62,7 +62,12 @@ class loginUserSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Password incorrect")
         except User.DoesNotExist:
             raise serializers.ValidationError("User does not exists")
-            
+
+class getAdvisorListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Advisor
+        fields = ('__all__')
         
 
 
