@@ -9,7 +9,9 @@ import datetime
 from django.contrib.auth.models import update_last_login
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import HttpResponse
+from rest_framework_jwt.settings import api_settings
+JWT_PAYLOAD_HANDLER = api_settings.JWT_PAYLOAD_HANDLER
+JWT_ENCODE_HANDLER = api_settings.JWT_ENCODE_HANDLER
 #from rest_framework_jwt.settings import api_settings
 
 class AddAdvisorSerializer(serializers.ModelSerializer):
@@ -38,7 +40,10 @@ class registerUserSerializer(serializers.ModelSerializer):
         newuser = User.objects.create_user(username=name,email=email)
         newuser.set_password(password)
         newuser.save()
-        return newuser
+        payload = JWT_PAYLOAD_HANDLER(newuser)
+        jwt_token = JWT_ENCODE_HANDLER(payload)
+        update_last_login(None, newuser)
+        return newuser, jwt_token
 
 class loginUserSerializer(serializers.ModelSerializer):
 
@@ -50,13 +55,16 @@ class loginUserSerializer(serializers.ModelSerializer):
         #name = self.validated_data['username']
         email = self.validated_data['email']
         password = self.validated_data['password']
-        user = authenticate(email=email,password=password)
+        #user = authenticate(email=email,password=password)
         
         try:
             user = User.objects.get(email=email)
             
             if check_password(password,user.password):
-                return user
+                payload = JWT_PAYLOAD_HANDLER(user)
+                jwt_token = JWT_ENCODE_HANDLER(payload)
+                update_last_login(None, user)
+                return user, jwt_token
             else:
                 raise serializers.ValidationError("Password incorrect")
         except User.DoesNotExist:

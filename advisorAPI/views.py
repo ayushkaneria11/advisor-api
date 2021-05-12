@@ -7,8 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view , permission_classes 
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.http import HttpResponse
-import json
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 # Create your views here.
 
 @api_view(['POST'])
@@ -27,8 +26,8 @@ def addAdvisor(request):
 def registerUser(request):
     serializers = registerUserSerializer(data=request.data,many=False)
     if serializers.is_valid():
-        user = serializers.registerUser()
-        return Response(data={"user_id":user.id},status=status.HTTP_200_OK)
+        user,token = serializers.registerUser()
+        return Response(data={"user_id":user.id,'Token':token},status=status.HTTP_200_OK)
     else:
         return Response(data=serializers.errors,status=status.HTTP_400_BAD_REQUEST)
 
@@ -37,20 +36,20 @@ def registerUser(request):
 def loginUser(request):
     serializers = loginUserSerializer(data=request.data,many=False)
     if serializers.is_valid():
-        user = serializers.loginUser()
-        return Response(data={'user_id':user.id,'username':user.username},status=status.HTTP_200_OK)
+        user,token = serializers.loginUser()
+        return Response(data={'user_id':user.id,'username':user.username,'token':token},status=status.HTTP_200_OK)
     else:
         return Response(data=serializers.errors,status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def getAdvisorList(request, **kwargs):
     get = Advisor.objects.all()
     serializers = getAdvisorListSerializer(get, many=True) 
     return Response(data=serializers.data,status=status.HTTP_200_OK)
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def bookAdvisor(request,user_id,advisor_id):
     serializers = bookAdvisorSerializer(data=request.data,many=False)
     if serializers.is_valid():
@@ -60,7 +59,7 @@ def bookAdvisor(request,user_id,advisor_id):
         return Response(data=serializers.errors)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def getBookedCalls(request,user_id):
     get = Booking.objects.get(userid=user_id)
     serializers = getBookedCallsSerializer(get,many=False)
