@@ -52,10 +52,27 @@ def getAdvisorList(request, **kwargs):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def bookAdvisor(request,user_id,advisor_id):
-    print(request.data.dict()['booking_time'])
     serializers = bookAdvisorSerializer(data=request.data,many=False)
     if serializers.is_valid():
         book = Booking.objects.create(userid=User.objects.get(id=user_id),advisorid=Advisor.objects.get(id=advisor_id),booking_time=request.data.dict()['booking_time'])
         return Response(status=status.HTTP_200_OK)
     else:
         return Response(data=serializers.errors)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def getBookedCalls(request,user_id):
+    get = Booking.objects.get(userid=user_id)
+    serializers = getBookedCallsSerializer(get,many=False)
+    print("this")
+    print(serializers.data['advisorid'])
+    advisor = Advisor.objects.get(id=serializers.data['advisorid'])
+    data = {
+        'Advisor Name':advisor.name,
+        'Advisor Profile_pic' : advisor.photo_url,
+        'Advisor ID' : advisor.id,
+        'Booking time' : serializers.data['booking_time'],
+        'Booking ID' : serializers.data['id']
+    }
+    return Response(data=data,status=status.HTTP_200_OK)
+

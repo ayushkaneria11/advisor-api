@@ -76,4 +76,10 @@ class bookAdvisorSerializer(serializers.ModelSerializer):
     # def bookAdvisor():
     #     pass
 
+class getBookedCallsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Booking
+        fields = ('__all__')
+
 
