@@ -14,5 +14,5 @@
 ## Heroku Deployment link
 https://nlabadvisorapi.herokuapp.com
 
-## Postman Collaction Link
+## Link to import Postman Collaction 
 https://www.getpostman.com/collections/6e9b254a759a9a43b3b7
