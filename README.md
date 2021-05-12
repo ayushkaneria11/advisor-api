@@ -1,18 +1,18 @@
 # NurtureLabs Assignment
 
-##Run Code
-1. Clone Repository
+## Run Code
+1. Clone Repository <br/>
 ```https://github.com/ayushkaneria11/advisor-api.git```
-2. Install All dependensise
+1. Install All dependensise <br/>
 ```pip install -r requirements.txt```
-3. Migrate Database
+1. Migrate Database <br/>
 ```python manage.py makemigrations```
 ```python manage.py migrate```
-4. Run server
+1. Run server <br/>
 ```python manage.py runserver```
 
-#Heroku Deployment link
+## Heroku Deployment link
 https://nlabadvisorapi.herokuapp.com
 
-#Postman Collaction Link
+## Postman Collaction Link
 https://www.getpostman.com/collections/6e9b254a759a9a43b3b7
